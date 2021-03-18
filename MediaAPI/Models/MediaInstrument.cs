@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediaAPI.Models.EnumModels;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -9,7 +10,7 @@ namespace MediaAPI.Models
     {
         public int MediaInstrumentId { get; set; }
         public int MediaId { get; set; }
-        public int Instrument { get; set; }
+        public Instrument Instrument { get; set; }
 
         public virtual MediaFile Media { get; set; }
     }

@@ -62,7 +62,7 @@ namespace MediaAPI.Models
         }
 
         private static bool ValidateDateOfBirth(DateTime _date) => _date > new DateTime(1900, 1, 1);
-        private static bool ValidatePhone(string _phone) => new Functions().IsPhoneNumber(_phone);
+        private static bool ValidatePhone(string _phone) => Functions.IsPhoneNumber(_phone);
 
         #endregion
 

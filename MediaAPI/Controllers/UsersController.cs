@@ -1,5 +1,6 @@
 ﻿using MediaAPI.Controllers.FrequentlyUsed;
 using MediaAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -14,70 +15,60 @@ namespace MediaAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly MediaDBContext _context;
-        private readonly Functions funcs;
-        private readonly IMemoryCache _cache;
 
-        public UsersController(MediaDBContext _context, IMemoryCache _cache)
+        public UsersController(MediaDBContext _context)
         {
             this._context = _context;
-            this._cache = _cache;
-            funcs = new Functions();
         }
 
-        [Route("Register")]
-        [HttpPost]
-        public ActionResult Register(User _userData, string _code) 
+        //api/Users/profile/2
+        [Route("profile/{_userId}")]
+        [Authorize]
+        [HttpGet]
+        public ActionResult<User> GetProfileInfo(int _userId) 
         {
-            if (!Models.User.ValidateModel(_userData))
+            var user = _context.Users.Find(_userId);
+
+            if (user == null) 
             {
-                return BadRequest("");
+                return NotFound();
             }
 
-            _userData.Phone = funcs.convertNormalPhoneNumber(_userData.Phone);
+            var result = getCleanUser(user);
 
-            string localCode;
-            try
-            {
-                localCode = _cache.Get<string>(_userData.Phone);
-            }
-            catch (Exception)
-            {
-                return BadRequest("Ошибка при извлечении из кэша.");
-            }
+            return result;
+        }
 
-            if (localCode == null)
+        //api/Users/find/dawdaw
+        [Route("find/{_nameCriteria}")]
+        [Authorize]
+        [HttpGet]
+        public ActionResult<IEnumerable<User>> GetUsersByName(string _nameCriteria) 
+        {
+            var nameCriteriaCaps = _nameCriteria.ToUpper();
+            var users = _context.Users.Where(user => user.UserName.ToUpper().Contains(nameCriteriaCaps));
+
+            if (!users.Any()) 
             {
-                return BadRequest("Устаревший или отсутствующий код.");
-            }
-            else
-            {
-                if (localCode != _code)
-                {
-                    return BadRequest("Ошибка. Получен неверный код. Подтвердите номер еще раз.");
-                }
+                return NotFound();
             }
 
-            if (_context.Users.Any(e => e.))
+            var result = new List<User>();
+            foreach (var user in users.ToList()) 
             {
-                return BadRequest("Такой номер уже зарегистрирован");
+                result.Add(getCleanUser(user));
             }
-            else
-            {
-                userCl.CreatedDate = DateTime.UtcNow;
-                userCl.UserRole = Models.EnumModels.UserRole.User;
-                userCl.Points = 0;
 
-                _context.Users.Add(userCl);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
-                    return Forbid();
-                }
-                return userCl; //без очистки, чтобы заполнить поля в приложении
-            }
+            return result;
+        }
+
+        private User getCleanUser(User _initialUser) 
+        {
+            var cleanModel = Functions.getCleanModel(_initialUser);
+
+            cleanModel.Password = null;
+
+            return cleanModel;
         }
     }
 }

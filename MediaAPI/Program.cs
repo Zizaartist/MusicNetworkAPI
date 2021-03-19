@@ -20,7 +20,11 @@ namespace MediaAPI
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .ConfigureKestrel(serverOptions => 
+                    {
+                        serverOptions.Limits.MaxRequestBodySize = (500 * 1024 * 1024);
+                    });
                 });
     }
 }

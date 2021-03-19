@@ -15,11 +15,15 @@ namespace MediaAPI.Models
             MediaInstruments = new HashSet<MediaInstrument>();
         }
 
+        //Required
         public int MediaId { get; set; }
         public MediaType MediaType { get; set; }
         public string MediaPath { get; set; }
         public string MediaName { get; set; }
         public long Views { get; set; }
+        public MediaExtension Extension { get; set; }
+
+        //Nullable
         public int? MusicDataId { get; set; }
         public int? VideoDataId { get; set; }
         public int? AuthorId { get; set; }

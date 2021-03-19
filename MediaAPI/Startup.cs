@@ -2,8 +2,10 @@ using MediaAPI.StaticValues;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +32,7 @@ namespace MediaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MediaDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("LocalConnection")));
+            services.AddDbContext<MediaDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
@@ -55,7 +57,14 @@ namespace MediaAPI
                             ValidateIssuerSigningKey = true,
                         };
                     });
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+            });
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 500 MB
+                options.MultipartBodyLengthLimit = 5242880000;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

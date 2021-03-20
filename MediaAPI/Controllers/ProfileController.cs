@@ -68,6 +68,9 @@ namespace MediaAPI.Controllers
             }
             else
             {
+                //Temp
+                _userData.DateOfBirth = DateTime.Now;
+
                 _context.Users.Add(_userData);
                 _context.SaveChanges();
             }

@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 
-#nullable disable
-
 namespace MediaAPI.Models
 {
     public partial class GroupMember

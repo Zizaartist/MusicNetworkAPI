@@ -64,7 +64,8 @@ namespace MediaAPI
             {
                 // Set the limit to 500 MB
                 options.MultipartBodyLengthLimit = 5242880000;
-            });
+            }); 
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

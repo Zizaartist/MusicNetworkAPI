@@ -1,4 +1,5 @@
 ﻿using MediaAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace MediaAPI.Controllers.FrequentlyUsed
         /// <returns>Пользователь, найденный в контексте</returns>
         public static User identityToUser(IIdentity identity, MediaDBContext _context)
         {
-            return _context.Users.FirstOrDefault(u => u.UserName == identity.Name);
+            return _context.Users.AsNoTracking().FirstOrDefault(u => u.UserName == identity.Name); //AsNoTracking должен предотвратить наличие во всех ответах на запрос
         }
 
         /// <summary>
@@ -108,6 +109,16 @@ namespace MediaAPI.Controllers.FrequentlyUsed
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
 
             return Convert.ToBase64String(hash);
+        }
+
+        public static User getCleanUser(User _initialUser)
+        {
+            var cleanModel = Functions.getCleanModel(_initialUser);
+
+            cleanModel.Password = null;
+            cleanModel.Phone = null;
+
+            return cleanModel;
         }
     }
 }

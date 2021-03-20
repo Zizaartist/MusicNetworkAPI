@@ -8,6 +8,7 @@ namespace MediaAPI.Models.EnumModels
     public enum MediaType
     {
         video,
-        music
+        music,
+        image
     }
 }

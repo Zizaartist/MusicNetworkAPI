@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-#nullable disable
+using System.Text.Json.Serialization;
 
 namespace MediaAPI.Models
 {
@@ -13,6 +12,7 @@ namespace MediaAPI.Models
         public int GroupId { get; set; }
         public Instrument Instrument { get; set; }
 
+        [JsonIgnore]
         public virtual Group Group { get; set; }
 
         #region validation

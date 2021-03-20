@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-#nullable disable
+using System.Text.Json.Serialization;
 
 namespace MediaAPI.Models
 {
@@ -30,11 +29,17 @@ namespace MediaAPI.Models
         public string AvatarPath { get; set; }
         public string Status { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Favourite> Favourites { get; set; }
+        [JsonIgnore]
         public virtual ICollection<GroupMember> GroupMembers { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Group> Groups { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MediaFile> MediaFiles { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Subscription> SubscriptionProviders { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Subscription> SubscriptionSubscribers { get; set; }
 
         #region validation
@@ -46,8 +51,8 @@ namespace MediaAPI.Models
                 if (_data == null ||
                     string.IsNullOrEmpty(_data.UserName) ||
                     string.IsNullOrEmpty(_data.Password) ||
-                    ValidatePhone(_data.Phone) ||
-                    ValidateDateOfBirth(_data.DateOfBirth)
+                    !ValidatePhone(_data.Phone) /*||
+                    !ValidateDateOfBirth(_data.DateOfBirth)*/
                     )
                 {
                     return false;

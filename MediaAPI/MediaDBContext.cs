@@ -3,14 +3,13 @@ using MediaAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-#nullable disable
-
 namespace MediaAPI
 {
     public partial class MediaDBContext : DbContext
     {
         public MediaDBContext()
         {
+            this.ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public MediaDBContext(DbContextOptions<MediaDBContext> options)
@@ -26,12 +25,14 @@ namespace MediaAPI
         public virtual DbSet<MediaFile> MediaFiles { get; set; }
         public virtual DbSet<MediaGenre> MediaGenres { get; set; }
         public virtual DbSet<MediaInstrument> MediaInstruments { get; set; }
-        public virtual DbSet<MusicData> MusicData { get; set; }
+        public virtual DbSet<MusicFile> MusicFiles { get; set; }
         public virtual DbSet<Subscription> Subscriptions { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<VideoData> VideoData { get; set; }
+        public virtual DbSet<VideoFile> VideoFiles { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -115,18 +116,6 @@ namespace MediaAPI
                     .HasForeignKey(d => d.AuthorId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_MediaFiles_Users");
-
-                entity.HasOne(d => d.MusicData)
-                    .WithMany(p => p.MediaFiles)
-                    .HasForeignKey(d => d.MusicDataId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_MediaFiles_MusicFiles");
-
-                entity.HasOne(d => d.VideoData)
-                    .WithMany(p => p.MediaFiles)
-                    .HasForeignKey(d => d.VideoDataId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_MediaFiles_VideoFiles");
             });
 
             modelBuilder.Entity<MediaGenre>(entity =>
@@ -145,10 +134,13 @@ namespace MediaAPI
                     .HasConstraintName("FK_MediaInstruments_MediaFiles");
             });
 
-            modelBuilder.Entity<MusicData>(entity =>
+            modelBuilder.Entity<MusicFile>(entity =>
             {
-                entity.HasKey(e => e.MusicId)
-                    .HasName("PK_MusicFiles");
+                entity.HasKey(e => e.MusicFileId);
+
+                entity.HasOne(e => e.MediaFile)
+                    .WithOne(e => e.MusicFile)
+                    .HasForeignKey<MusicFile>(e => e.MediaFileId);
 
                 entity.Property(e => e.Artist).HasMaxLength(50);
 
@@ -189,15 +181,15 @@ namespace MediaAPI
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<VideoData>(entity =>
+            modelBuilder.Entity<VideoFile>(entity =>
             {
-                entity.HasKey(e => e.VideoId)
-                    .HasName("PK_VideoFiles");
+                entity.HasKey(e => e.VideoFileId);
 
-                entity.Property(e => e.VideoId).ValueGeneratedNever();
+                entity.HasOne(e => e.MediaFile)
+                    .WithOne(e => e.VideoFile)
+                    .HasForeignKey<VideoFile>(e => e.MediaFileId);
 
                 entity.Property(e => e.Preview)
-                    .IsRequired()
                     .HasMaxLength(50);
             });
 

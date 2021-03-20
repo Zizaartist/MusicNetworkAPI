@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/mediadbs/databases/mediaDB",
+      "type": "mssql.azure",
+      "connectionId": "AccessKey",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

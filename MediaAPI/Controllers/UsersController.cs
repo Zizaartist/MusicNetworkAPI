@@ -34,7 +34,7 @@ namespace MediaAPI.Controllers
                 return NotFound();
             }
 
-            var result = getCleanUser(user);
+            var result = Functions.getCleanUser(user);
 
             return result;
         }
@@ -56,19 +56,10 @@ namespace MediaAPI.Controllers
             var result = new List<User>();
             foreach (var user in users.ToList()) 
             {
-                result.Add(getCleanUser(user));
+                result.Add(Functions.getCleanUser(user));
             }
 
             return result;
-        }
-
-        private User getCleanUser(User _initialUser) 
-        {
-            var cleanModel = Functions.getCleanModel(_initialUser);
-
-            cleanModel.Password = null;
-
-            return cleanModel;
         }
     }
 }

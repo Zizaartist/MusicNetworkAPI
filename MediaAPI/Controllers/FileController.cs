@@ -118,7 +118,7 @@ namespace MediaAPI.Controllers
                                 contentDisposition.FileName.Value);
                         var trustedFileNameForFileStorage = Path.GetRandomFileName(); //Удобно, уже предусмотрели :)
                         fileName = trustedFileNameForFileStorage;
-                        extension = Path.GetExtension(contentDisposition.FileName.Value).ToLowerInvariant();
+                        extension =  Path.GetExtension(contentDisposition.FileName.Value).ToLowerInvariant();
 
                         // **WARNING!**
                         // In the following example, the file is saved without
@@ -151,7 +151,7 @@ namespace MediaAPI.Controllers
                 section = await reader.ReadNextSectionAsync();
             }
 
-            return Json(new { fileName = fileName, extension = extension });
+            return Json(new { FileName = fileName, Extension = MediaExtensionDictionaries.StringToMediaExtension[extension] });
         }
     }
 

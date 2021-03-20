@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-#nullable disable
-
 namespace MediaAPI.Models
 {
     public partial class Group

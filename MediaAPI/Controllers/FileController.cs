@@ -116,9 +116,9 @@ namespace MediaAPI.Controllers
                         // the file name, HTML-encode the value.
                         var trustedFileNameForDisplay = WebUtility.HtmlEncode(
                                 contentDisposition.FileName.Value);
-                        var trustedFileNameForFileStorage = Path.GetRandomFileName(); //Удобно, уже предусмотрели :)
+                        extension = Path.GetExtension(contentDisposition.FileName.Value).ToLowerInvariant();
+                        var trustedFileNameForFileStorage = Path.GetRandomFileName() + extension; //Удобно, уже предусмотрели :)
                         fileName = trustedFileNameForFileStorage;
-                        extension =  Path.GetExtension(contentDisposition.FileName.Value).ToLowerInvariant();
 
                         // **WARNING!**
                         // In the following example, the file is saved without

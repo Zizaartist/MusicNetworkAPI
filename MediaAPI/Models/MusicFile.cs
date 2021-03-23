@@ -20,7 +20,7 @@ namespace MediaAPI.Models
             try
             {
                 if (_data == null ||
-                    MediaFile.ValidateModel(_data.MediaFile)
+                    !MediaFile.ValidateModel(_data.MediaFile)
                     )
                 {
                     return false;

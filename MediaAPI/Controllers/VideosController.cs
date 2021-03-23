@@ -23,6 +23,7 @@ namespace MediaAPI.Controllers
             this._context = _context;
         }
 
+        //api/Videos/
         [Authorize]
         [HttpPost]
         public ActionResult UploadVideo(VideoFile _videoData)
@@ -92,10 +93,14 @@ namespace MediaAPI.Controllers
             int LIMIT = 3;
 
             IQueryable<VideoFile> videos = _context.VideoFiles;
-            if (limited) videos = videos.Take(LIMIT);
 
-            var nameCriteriaCaps = _nameCriteria.ToUpper();
-            videos = videos.Where(video => video.MediaFile.MediaName.ToUpper().Contains(nameCriteriaCaps));
+            if (!string.IsNullOrEmpty(_nameCriteria))
+            {
+                var nameCriteriaCaps = _nameCriteria.ToUpper();
+                videos = videos.Where(video => video.MediaFile.MediaName.ToUpper().Contains(nameCriteriaCaps));
+            }
+
+            if (limited) videos = videos.Take(LIMIT);
             AddExtraData(ref videos);
 
             if (!videos.Any())

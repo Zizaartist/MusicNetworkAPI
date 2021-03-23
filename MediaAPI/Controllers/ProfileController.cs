@@ -35,6 +35,7 @@ namespace MediaAPI.Controllers
             }
 
             _userData.Phone = Functions.convertNormalPhoneNumber(_userData.Phone);
+            _userData.Password = Functions.GetHashFromString(_userData.Password);
 
             //string localCode;
             //try

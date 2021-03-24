@@ -54,7 +54,7 @@ namespace MediaAPI.Controllers.FrequentlyUsed
         /// <returns>Пользователь, найденный в контексте</returns>
         public static User identityToUser(IIdentity identity, MediaDBContext _context)
         {
-            return _context.Users.AsNoTracking().FirstOrDefault(u => u.UserName == identity.Name); //AsNoTracking должен предотвратить наличие во всех ответах на запрос
+            return _context.Users.AsNoTracking().FirstOrDefault(u => u.UserId == int.Parse(identity.Name)); //AsNoTracking должен предотвратить наличие во всех ответах на запрос
         }
 
         /// <summary>

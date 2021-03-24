@@ -50,7 +50,7 @@ namespace MediaAPI.Controllers
                 return BadRequest();
             }
 
-            var mySelf = _context.Users.First(user => user.UserName == User.Identity.Name); //не используем functions т.к. нам нужен tracking
+            var mySelf = _context.Users.First(user => user.UserId == int.Parse(User.Identity.Name)); //не используем functions т.к. нам нужен tracking
             mySelf.UserName = _userData.UserName;
             mySelf.AvatarPath = _userData.AvatarPath;
             mySelf.Status = _userData.Status;
@@ -61,14 +61,22 @@ namespace MediaAPI.Controllers
             return Ok();
         }
 
-        //api/Users/find/dawdaw
-        [Route("find/{_nameCriteria}")]
+        //api/Users/find/dawdaw?limited=true
+        [Route("find")]
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetUsersByName(string _nameCriteria) 
+        public ActionResult<IEnumerable<User>> GetUsersByName(bool limited, string _nameCriteria) 
         {
-            var nameCriteriaCaps = _nameCriteria.ToUpper();
-            var users = _context.Users.Where(user => user.UserName.ToUpper().Contains(nameCriteriaCaps));
+            var LIMIT = 3;
+
+            IQueryable<User> users = _context.Users;
+
+            if (!string.IsNullOrEmpty(_nameCriteria))
+            {
+                var nameCriteriaCaps = _nameCriteria.ToUpper();
+                users = users.Where(user => user.UserName.ToUpper().Contains(nameCriteriaCaps));
+            }
+            if (limited) users = users.Take(LIMIT);
 
             if (!users.Any()) 
             {

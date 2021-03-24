@@ -187,13 +187,16 @@ namespace MediaAPI.Controllers
             return result;
         }
 
-        //api/Musics/FindByInstrument/2
+        //api/Musics/FindByInstrument/2?limited=false
         [Route("FindByInstrument/{_instrumentCriteria}")]
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<MusicFile>> GetMusicsByInstrument(Instrument _instrumentCriteria)
+        public ActionResult<IEnumerable<MusicFile>> GetMusicsByInstrument(bool limited, Instrument _instrumentCriteria)
         {
+            int LIMIT = 6;
+
             var music = _context.MusicFiles.Where(music => music.MediaFile.MediaInstruments.Any(inst => inst.Instrument == _instrumentCriteria));
+            if (limited) music = music.Take(LIMIT);
             AddExtraData(ref music);
 
             if (!music.Any())
@@ -207,13 +210,16 @@ namespace MediaAPI.Controllers
             return result;
         }
 
-        //api/Musics/FindByGenre/2
+        //api/Musics/FindByGenre/2?limited=false
         [Route("FindByGenre/{_genreCriteria}")]
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<MusicFile>> GetMusicsByGenre(Genre _genreCriteria)
+        public ActionResult<IEnumerable<MusicFile>> GetMusicsByGenre(bool limited, Genre _genreCriteria)
         {
+            int LIMIT = 6;
+
             var music = _context.MusicFiles.Where(music => music.MediaFile.MediaGenres.Any(genre => genre.Genre == _genreCriteria));
+            if (limited) music = music.Take(LIMIT); 
             AddExtraData(ref music);
 
             if (!music.Any())

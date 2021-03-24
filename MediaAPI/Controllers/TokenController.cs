@@ -31,7 +31,7 @@ namespace MediaAPI.Controllers
         public ActionResult<string> GetToken(string login, string password)
         {
             var identity = GetIdentity(login, password);
-            if (identity == null)
+            if (identity.Item1 == null)
             {
                 return NotFound();
             }
@@ -42,7 +42,7 @@ namespace MediaAPI.Controllers
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     notBefore: now,
-                    claims: identity.Claims,
+                    claims: identity.Item1.Claims,
                     expires: now.Add(TimeSpan.FromDays(AuthOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)); //Не ебу что это
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -50,13 +50,13 @@ namespace MediaAPI.Controllers
             var response = new
             {
                 access_token = encodedJwt,
-                username = identity.Name
+                userId = identity.Item2.UserId
             };
 
             return Json(response);
         }
 
-        private ClaimsIdentity GetIdentity(string login, string password)
+        private (ClaimsIdentity, User) GetIdentity(string login, string password)
         {
             var passHash = Functions.GetHashFromString(password);
             User user = _context.Users.FirstOrDefault(e => e.UserName == login && e.Password == passHash);
@@ -66,16 +66,16 @@ namespace MediaAPI.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserId.ToString()),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, "User")
                 };
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-                return claimsIdentity;
+                return (claimsIdentity, user);
             }
 
             // если пользователя не найдено
-            return null;
+            return (null, null);
         }
     }
 }

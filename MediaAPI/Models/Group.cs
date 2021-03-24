@@ -37,8 +37,8 @@ namespace MediaAPI.Models
             {
                 if (_data == null ||
                     string.IsNullOrEmpty(_data.GroupName) ||
-                    ValidateGroupGenres(_data.GroupGenres) ||
-                    ValidateGroupInstruments(_data.GroupInstruments))
+                    !ValidateGroupGenres(_data.GroupGenres) ||
+                    !ValidateGroupInstruments(_data.GroupInstruments))
                 {
                     return false;
                 }

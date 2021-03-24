@@ -153,13 +153,16 @@ namespace MediaAPI.Controllers
             return result;
         }
 
-        //api/Videos/FindByInstrument/2
+        //api/Videos/FindByInstrument/2?limited=false
         [Route("FindByInstrument/{_instrumentCriteria}")]
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<VideoFile>> GetVideosByInstrument(Instrument _instrumentCriteria)
+        public ActionResult<IEnumerable<VideoFile>> GetVideosByInstrument(bool limited, Instrument _instrumentCriteria)
         {
+            var LIMIT = 3;
+
             var videos = _context.VideoFiles.Where(video => video.MediaFile.MediaInstruments.Any(inst => inst.Instrument == _instrumentCriteria));
+            if (limited) videos = videos.Take(LIMIT);
             AddExtraData(ref videos);
 
             if (!videos.Any())
@@ -173,13 +176,16 @@ namespace MediaAPI.Controllers
             return result;
         }
 
-        //api/Videos/FindByGenre/2
+        //api/Videos/FindByGenre/2?limited=false
         [Route("FindByGenre/{_genreCriteria}")]
         [Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<VideoFile>> GetVideosByGenre(Genre _genreCriteria)
+        public ActionResult<IEnumerable<VideoFile>> GetVideosByGenre(bool limited, Genre _genreCriteria)
         {
+            var LIMIT = 3;
+
             var videos = _context.VideoFiles.Where(video => video.MediaFile.MediaGenres.Any(genre => genre.Genre == _genreCriteria));
+            if (limited) videos = videos.Take(LIMIT);
             AddExtraData(ref videos);
 
             if (!videos.Any())

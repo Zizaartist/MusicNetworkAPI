@@ -29,13 +29,15 @@ namespace MediaAPI.Models
 
         public User Author { get; set; } //Без virtual чтобы случайно не срабатывал lazy loading
         [JsonIgnore]
-        public virtual VideoFile VideoFile { get; set; }
+        public VideoFile VideoFile { get; set; }
         [JsonIgnore]
-        public virtual MusicFile MusicFile { get; set; }
+        public MusicFile MusicFile { get; set; }
         [JsonIgnore]
         public virtual ICollection<Favourite> Favourites { get; set; }
         public ICollection<MediaGenre> MediaGenres { get; set; }
         public ICollection<MediaInstrument> MediaInstruments { get; set; }
+        [JsonIgnore]
+        public ICollection<GroupFavourite> GroupFavourites { get; set; }
 
         #region validation
 

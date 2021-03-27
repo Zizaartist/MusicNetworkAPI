@@ -28,6 +28,7 @@ namespace MediaAPI.Models
         public virtual ICollection<GroupGenre> GroupGenres { get; set; }
         public virtual ICollection<GroupInstrument> GroupInstruments { get; set; }
         public virtual ICollection<GroupMember> GroupMembers { get; set; }
+        public virtual ICollection<GroupFavourite> GroupFavourites { get; set; }
 
         #region validation
 
@@ -38,7 +39,8 @@ namespace MediaAPI.Models
                 if (_data == null ||
                     string.IsNullOrEmpty(_data.GroupName) ||
                     !ValidateGroupGenres(_data.GroupGenres) ||
-                    !ValidateGroupInstruments(_data.GroupInstruments))
+                    !ValidateGroupInstruments(_data.GroupInstruments) ||
+                    !ValidateGroupMembers(_data.GroupMembers))
                 {
                     return false;
                 }
@@ -78,6 +80,23 @@ namespace MediaAPI.Models
             foreach (var genre in _genres)
             {
                 if (!GroupGenre.ValidateModel(genre))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static bool ValidateGroupMembers(ICollection<GroupMember> _members) 
+        {
+            if (_members == null ||
+                !_members.Any())
+            {
+                return false;
+            }
+            foreach (var member in _members)
+            {
+                if (!GroupMember.ValidateModel(member))
                 {
                     return false;
                 }

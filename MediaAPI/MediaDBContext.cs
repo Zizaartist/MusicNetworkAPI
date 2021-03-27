@@ -29,6 +29,7 @@ namespace MediaAPI
         public virtual DbSet<Subscription> Subscriptions { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<VideoFile> VideoFiles { get; set; }
+        public virtual DbSet<GroupFavourite> GroupFavourites { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
         {
@@ -191,6 +192,23 @@ namespace MediaAPI
 
                 entity.Property(e => e.Preview)
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GroupFavourite>(entity => 
+            {
+                entity.HasKey(e => e.GroupFavouriteId);
+
+                entity.HasOne(e => e.Group)
+                    .WithMany(e => e.GroupFavourites)
+                    .HasForeignKey(e => e.GroupId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_GroupFavourites_Groups");
+
+                entity.HasOne(e => e.MediaFile)
+                    .WithMany(e => e.GroupFavourites)
+                    .HasForeignKey(e => e.MediaFileId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_GroupFavourites_MediaFiles");
             });
 
             OnModelCreatingPartial(modelBuilder);

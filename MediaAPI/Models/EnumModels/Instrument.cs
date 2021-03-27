@@ -9,7 +9,9 @@ namespace MediaAPI.Models.EnumModels
     {
         guitar,
         bass,
-        keys
+        keys,
+        drums,
+        singing
     }
 
     public class InstrumentDictionaries
@@ -18,14 +20,18 @@ namespace MediaAPI.Models.EnumModels
         {
             { Instrument.guitar, "Гитара" },
             { Instrument.bass, "Бас" },
-            { Instrument.keys, "Клавиши" }
+            { Instrument.keys, "Клавиши" },
+            { Instrument.drums, "Барабаны" },
+            { Instrument.singing, "Пение" },
         };
 
         public static Dictionary<string, Instrument> StringToInstrument = new Dictionary<string, Instrument>()
         {
             { "Гитара", Instrument.guitar },
             { "Бас", Instrument.bass },
-            { "Клавиши", Instrument.keys }
+            { "Клавиши", Instrument.keys },
+            { "Барабаны", Instrument.drums },
+            { "Пение", Instrument.singing },
         };
     }
 }

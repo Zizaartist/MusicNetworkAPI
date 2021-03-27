@@ -26,9 +26,11 @@ namespace MediaAPI.Controllers
         [Route("profile/{_userId}")]
         [Authorize]
         [HttpGet]
-        public ActionResult<User> GetProfileInfo(int _userId) 
+        public ActionResult<User> GetProfileInfo(int _userId)
         {
-            var user = _context.Users.Find(_userId);
+            var user = _context.Users.FirstOrDefault(u => u.UserId == _userId);
+
+            var mySelf = Functions.identityToUser(User.Identity, _context);
 
             if (user == null) 
             {
@@ -36,6 +38,8 @@ namespace MediaAPI.Controllers
             }
 
             var result = Functions.getCleanUser(user);
+
+            result.IsSubscribedTo = _context.Subscriptions.Any(sub => sub.ProviderId == user.UserId && sub.SubscriberId == mySelf.UserId);
 
             return result;
         }
@@ -83,9 +87,12 @@ namespace MediaAPI.Controllers
                 return NotFound();
             }
 
+            var mySelf = Functions.identityToUser(User.Identity, _context);
+
             var result = new List<User>();
             foreach (var user in users.ToList()) 
             {
+                if(!limited) user.IsSubscribedTo = _context.Subscriptions.Any(sub => sub.ProviderId == user.UserId && sub.SubscriberId == mySelf.UserId);
                 result.Add(Functions.getCleanUser(user));
             }
 
@@ -129,6 +136,64 @@ namespace MediaAPI.Controllers
             };
 
             return Json(result);
+        }
+
+        //api/Users/friends?_groupCriteria
+        [Route("friends")]
+        [Authorize]
+        [HttpGet]
+        public ActionResult<IEnumerable<User>> GetFriends() 
+        {
+            var mySelf = Functions.identityToUser(User.Identity, _context);
+
+            var friends = _context.Subscriptions.Where(sub => sub.SubscriberId == mySelf.UserId)
+                                                .Include(sub => sub.Provider)
+                                                .Select(sub => sub.Provider);
+
+            if (!friends.Any()) 
+            {
+                return NotFound();
+            }
+
+            var result = new List<User>();
+
+            foreach (var friend in friends.ToList())
+            {
+                result.Add(Functions.getCleanUser(friend));
+            }
+
+            return result;
+        }
+
+        //api/Users/subscribe/3
+        [Route("subscribe/{_userId}")]
+        [Authorize]
+        [HttpPut]
+        public ActionResult<bool> ToggleSubscription(int _userId) 
+        {
+            var target = _context.Users.Find(_userId);
+
+            if (target == null) 
+            {
+                return NotFound(); //does not exist
+            }
+
+            var mySelf = Functions.identityToUser(User.Identity, _context);
+
+            var subscription = _context.Subscriptions.FirstOrDefault(sub => sub.ProviderId == target.UserId && sub.SubscriberId == mySelf.UserId);
+
+            if (subscription != null)
+            {
+                _context.Subscriptions.Remove(subscription);
+                _context.SaveChanges();
+                return false;
+            }
+            else 
+            {
+                _context.Subscriptions.Add(new Subscription() { SubscriberId = mySelf.UserId, ProviderId = target.UserId });
+                _context.SaveChanges();
+                return true;
+            }
         }
     }
 }

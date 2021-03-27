@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace MediaAPI.Models
 {
@@ -11,7 +12,7 @@ namespace MediaAPI.Models
         public string Artist { get; set; }
         public int MediaFileId { get; set; }
 
-        public virtual MediaFile MediaFile { get; set; }
+        public MediaFile MediaFile { get; set; }
 
         #region validation
 

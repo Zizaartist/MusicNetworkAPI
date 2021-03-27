@@ -1,6 +1,7 @@
 ﻿using MediaAPI.Controllers.FrequentlyUsed;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
@@ -38,9 +39,12 @@ namespace MediaAPI.Models
         [JsonIgnore]
         public virtual ICollection<MediaFile> MediaFiles { get; set; }
         [JsonIgnore]
-        public virtual ICollection<Subscription> SubscriptionProviders { get; set; }
+        public ICollection<Subscription> SubscriptionProviders { get; set; } //Наличие 1 говорит о подписке
         [JsonIgnore]
         public virtual ICollection<Subscription> SubscriptionSubscribers { get; set; }
+
+        [NotMapped]
+        public bool IsSubscribedTo { get; set; }
 
         #region validation
 

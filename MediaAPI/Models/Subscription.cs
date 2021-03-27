@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace MediaAPI.Models
 {
@@ -9,7 +10,9 @@ namespace MediaAPI.Models
         public int? SubscriberId { get; set; }
         public int ProviderId { get; set; }
 
+        [JsonIgnore]
         public virtual User Provider { get; set; }
+        [JsonIgnore]
         public virtual User Subscriber { get; set; }
     }
 }
